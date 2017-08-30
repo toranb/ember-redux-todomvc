@@ -1,0 +1,11 @@
+{{#if (gt todosCount 0)}}
+  {{yield
+    filter
+    todosCount
+    completedCount
+    (action "clearCompleted")
+    (action "showAll")
+    (action "showActive")
+    (action "showCompleted")
+  }}
+{{/if}}

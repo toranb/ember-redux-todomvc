@@ -1,0 +1,33 @@
+{{#ui-header as |text addTodo|}}
+  <h1>todos</h1>
+  <form {{action (pipe (action addTodo text) (action (mut text) "")) on="submit"}}>
+    <input type="text" class="new-todo" placeholder="What needs to be done?" value={{text}} oninput={{action (mut text) value="target.value"}} autofocus>
+    <input style="display: none" type="submit" value="submit" />
+  </form>
+{{/ui-header}}
+<section class="main">
+  <input type="checkbox" class="toggle-all" value="on">
+  {{#todo-list as |todos|}}
+    {{#each-in todos as |key todo|}}
+      {{#todo-item todo=todo as |deleteTodo completeTodo editTodo handleKeydown focusInput startEditing doneEditing|}}
+        <div class="view">
+          <input type="checkbox" checked={{todo.completed}} class="toggle" onchange={{action completeTodo}}>
+          <label ondblclick={{action (pipe (action startEditing) (action focusInput))}}>{{todo.text}}</label>
+          <button class="destroy" onclick={{action deleteTodo}}></button>
+        </div>
+        <input type="text" class="edit" value={{todo.text}} onblur={{action (pipe (action editTodo value="target.value") (action doneEditing))}} onkeydown={{action handleKeydown}}>
+      {{/todo-item}}
+    {{/each-in}}
+  {{/todo-list}}
+</section>
+{{#ui-footer as |filter todosCount completedCount clearCompleted showAll showActive showCompleted |}}
+  {{#todos-count todosCount=todosCount as |itemWord|}}<strong>{{todosCount}}</strong> {{itemWord}} left{{/todos-count}}
+  <ul class="filters">
+    <li><a onclick={{action showAll}} class={{if (is-equal filter) "selected"}} style="cursor: pointer;">All</a></li>
+    <li><a onclick={{action showActive}} class={{if (is-equal filter false) "selected"}} style="cursor: pointer;">Active</a></li>
+    <li><a onclick={{action showCompleted}} class={{if (is-equal filter true) "selected"}} style="cursor: pointer;">Completed</a></li>
+  </ul>
+  {{#if (gt completedCount 0)}}
+  <button onclick={{action clearCompleted}} class="clear-completed">Clear completed</button>
+  {{/if}}
+{{/ui-footer}}
